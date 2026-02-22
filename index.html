@@ -1438,7 +1438,7 @@
   window.addEventListener('DOMContentLoaded', () => {
     if (TMDB_KEY) {
       document.getElementById('apiKeyInput').value = TMDB_KEY;
-      document.getElementById('apiBanner').style.display = 'none';
+      document.getElementById('apiBanner').style.display = 'none'; document.getElementById('apiBanner').style.display = 'none';
       loadFilmsWithTMDB();
     } else {
       loadFilmsPlaceholder();
@@ -1452,7 +1452,7 @@
     if (!key) return;
     TMDB_KEY = key;
     localStorage.setItem('tmdb_api_key', key);
-    document.getElementById('apiBanner').style.display = 'none';
+    document.getElementById('apiBanner').style.display = 'none'; document.getElementById('apiBanner').style.display = 'none';
     loadFilmsWithTMDB();
   }
 
@@ -1520,36 +1520,39 @@
   // API key yokken placeholder filmler
   function loadFilmsPlaceholder() {
     const grid = document.getElementById('filmGrid');
-    const colors = ['#1a0a12,#3d1430','#0a0a1a,#141452','#0a1a12,#145228','#1a1200,#523800','#1a0a1a,#4a1452','#001a1a,#005252','#1a0000,#520000','#0d0d0d,#2a2a2a'];
     grid.innerHTML = '';
     window._allFilmsData = QUEER_FILMS.map(f => ({...f, year:'', rating:'—', poster:null, desc:f.desc, title:f.title}));
-    QUEER_FILMS.forEach((film, i) => {
+    QUEER_FILMS.forEach((film) => {
       const card = document.createElement('div');
       card.className = 'film-card';
       card.onclick = () => openModal(film.title, '', film.desc, film.badge, film.badgeColor, '—', null, film.qi, film.id, film.videoUrl);
-      card.innerHTML = `
-        <div class="film-poster" style="background:linear-gradient(135deg,${colors[i % colors.length]})">
-          <div class="film-poster-inner">
-            <div class="film-poster-overlay"></div>
-            <div class="queer-badge" style="background:${film.badgeColor}cc">${film.badge}</div>
-            <div class="film-year-overlay">API key gir → poster yüklensin</div>
-            <div class="film-title-overlay">${film.title}</div>
-          </div>
-        </div>
-        <div class="film-meta">
-          <div class="film-info">
-            <div class="film-title-text">${film.title}</div>
-            <div class="film-sub">${film.badge}</div>
-          </div>
-          <button class="film-add" title="Listeme Ekle" onclick="event.stopPropagation();this.textContent='✓';this.style.color='var(--accent)';this.style.borderColor='var(--accent)'">+</button>
-        </div>`;
+      const colors = {
+        'Gay': 'linear-gradient(135deg,#3a0a2a,#6a1a4a)',
+        'Lezbiyen': 'linear-gradient(135deg,#0a1a3a,#1a2a6a)',
+        'Trans': 'linear-gradient(135deg,#0a2a2a,#1a4a4a)',
+        'Biseksüel': 'linear-gradient(135deg,#1a0a3a,#3a1a5a)',
+        'Queer': 'linear-gradient(135deg,#2a1a0a,#4a2a1a)',
+        'Belgesel': 'linear-gradient(135deg,#1a2a0a,#2a4a1a)',
+      };
+      const bg = colors[film.badge] || 'linear-gradient(135deg,#1a0a12,#2a1030)';
+      card.innerHTML =
+        '<div class="film-poster" style="background:' + bg + ';display:flex;align-items:center;justify-content:center">' +
+          '<div class="film-poster-inner">' +
+            '<div class="film-poster-overlay"></div>' +
+            '<div class="queer-badge" style="background:' + film.badgeColor + 'cc">' + film.badge + '</div>' +
+            '<div class="film-title-overlay" style="font-size:14px;padding:0 12px;text-align:center">' + film.title + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="film-meta">' +
+          '<div class="film-info">' +
+            '<div class="film-title-text">' + film.title + '</div>' +
+            '<div class="film-sub">' + film.badge + '</div>' +
+          '</div>' +
+          '<button class="film-add" onclick="event.stopPropagation()">+</button>' +
+        '</div>';
       grid.appendChild(card);
     });
   }
-
-  // ===== MODAL =====
-  let currentVideoUrl = null;
-
   function openModal(title, year, desc, badge, badgeColor, rating, poster, qi, tmdbId, videoUrl) {
     currentVideoUrl = videoUrl || null;
 
