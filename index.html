@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renk Sinema — Her Rengin Bir Hikayesi Var</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080808;
+    --surface: #111111;
+    --surface2: #1a1a1a;
+    --border: rgba(255,255,255,0.07);
+    --accent: #C84B9E;
+    --accent2: #F5A623;
+    --accent3: #4BC8A0;
+    --text: #F0EDE8;
+    --muted: #888;
+    --gradient: linear-gradient(135deg, #C84B9E, #8B2FC9, #4B6EC8);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    background: linear-gradient(to bottom, rgba(8,8,8,0.98), transparent);
+    backdrop-filter: blur(2px);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    text-decoration: none;
+  }
+
+  .logo span:nth-child(1) { color: #C84B9E; }
+  .logo span:nth-child(2) { color: #F5A623; }
+  .logo span:nth-child(3) { color: #4BC8A0; }
+  .logo span:nth-child(4) { color: #4B6EC8; }
+  .logo-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--muted);
+    margin-left: 4px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .btn-search {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 18px;
+    transition: color 0.2s;
+  }
+  .btn-search:hover { color: var(--text); }
+
+  /* ===== AD ZONES ===== */
+  .ad-zone {
+    background: var(--surface2);
+    border: 1px dashed rgba(255,255,255,0.1);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ad-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(200,75,158,0.03), transparent);
+  }
+
+  .ad-zone-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    opacity: 0.4;
+    letter-spacing: 3px;
+  }
+
+  .ad-zone-size {
+    font-size: 18px;
+    opacity: 0.15;
+  }
+
+  /* Leaderboard — 728x90 */
+  .ad-leaderboard {
+    width: 100%;
+    height: 90px;
+    margin: 0 48px;
+    width: calc(100% - 96px);
+  }
+
+  /* Rectangle — 300x250 */
+  .ad-rectangle {
+    width: 300px;
+    height: 250px;
+    flex-shrink: 0;
+  }
+
+  /* Banner strip between sections */
+  .ad-strip {
+    margin: 40px 48px 0;
+    height: 90px;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-end;
+    padding: 0 48px 80px;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 60% at 70% 40%, rgba(200,75,158,0.2), transparent),
+      radial-gradient(ellipse 40% 50% at 20% 60%, rgba(75,110,200,0.15), transparent),
+      radial-gradient(ellipse 50% 40% at 50% 80%, rgba(75,200,160,0.1), transparent),
+      #080808;
+  }
+
+  .hero-film-strip {
+    position: absolute;
+    top: 0; right: 0;
+    width: 55%;
+    height: 100%;
+    overflow: hidden;
+    mask-image: linear-gradient(to left, black 60%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to left, black 60%, transparent 100%);
+  }
+
+  .film-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    height: 100%;
+    animation: filmDrift 30s linear infinite;
+  }
+
+  @keyframes filmDrift {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-30px); }
+  }
+
+  .film-card-mini {
+    background: var(--surface2);
+    border-radius: 4px;
+    overflow: hidden;
+    aspect-ratio: 2/3;
+    position: relative;
+  }
+
+  .film-card-mini::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 60%, rgba(200,75,158,0.3));
+  }
+
+  .film-poster-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    color: rgba(255,255,255,0.05);
+  }
+
+  /* Fake posters with color themes */
+  .fp1 { background: linear-gradient(160deg, #1a0a12, #3d1430); }
+  .fp2 { background: linear-gradient(160deg, #0a0a1a, #141452); }
+  .fp3 { background: linear-gradient(160deg, #0a1a12, #145228); }
+  .fp4 { background: linear-gradient(160deg, #1a1200, #523800); }
+  .fp5 { background: linear-gradient(160deg, #1a0a1a, #4a1452); }
+  .fp6 { background: linear-gradient(160deg, #001a1a, #005252); }
+  .fp7 { background: linear-gradient(160deg, #1a0000, #520000); }
+  .fp8 { background: linear-gradient(160deg, #0d0d0d, #2a2a2a); }
+  .fp9 { background: linear-gradient(160deg, #0a120a, #1e3a1e); }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 560px;
+    animation: fadeUp 1s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 6vw, 80px);
+    font-weight: 900;
+    line-height: 1.0;
+    letter-spacing: -2px;
+    margin-bottom: 24px;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-desc {
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 1.8;
+    margin-bottom: 36px;
+    max-width: 420px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .btn-primary {
+    background: var(--gradient);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: opacity 0.2s, transform 0.2s;
+    border-radius: 2px;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: none;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 13px 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    border-radius: 2px;
+    transition: border-color 0.2s;
+  }
+  .btn-secondary:hover { border-color: rgba(255,255,255,0.3); }
+
+  .hero-stats {
+    position: absolute;
+    bottom: 80px;
+    right: 48px;
+    display: flex;
+    gap: 40px;
+    z-index: 2;
+    animation: fadeUp 1s 0.3s ease both;
+  }
+
+  .stat {
+    text-align: right;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* ===== CATEGORY STRIP ===== */
+  .categories {
+    padding: 0 48px;
+    margin: 60px 0 0;
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 28px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .section-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    transition: opacity 0.2s;
+  }
+  .section-link:hover { opacity: 0.7; }
+
+  .cat-pills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .cat-pill {
+    padding: 10px 22px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    letter-spacing: 0.3px;
+  }
+
+  .cat-pill:hover { border-color: var(--accent); color: var(--text); }
+  .cat-pill.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+  .cat-pill[data-color="teal"] { }
+  .cat-pill[data-color="teal"]:hover { border-color: var(--accent3); }
+  .cat-pill[data-color="teal"].active { background: var(--accent3); border-color: var(--accent3); }
+
+  .cat-pill[data-color="gold"]:hover { border-color: var(--accent2); }
+  .cat-pill[data-color="gold"].active { background: var(--accent2); border-color: var(--accent2); color: #111; }
+
+  /* ===== FILM GRID ===== */
+  .section {
+    padding: 60px 48px 0;
+  }
+
+  .films-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 4px;
+  }
+
+  .film-card {
+    position: relative;
+    cursor: pointer;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .film-card:nth-child(1) { animation-delay: 0.05s; }
+  .film-card:nth-child(2) { animation-delay: 0.1s; }
+  .film-card:nth-child(3) { animation-delay: 0.15s; }
+  .film-card:nth-child(4) { animation-delay: 0.2s; }
+  .film-card:nth-child(5) { animation-delay: 0.25s; }
+  .film-card:nth-child(6) { animation-delay: 0.3s; }
+
+  .film-poster {
+    aspect-ratio: 2/3;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 12px;
+    transition: transform 0.3s ease;
+  }
+
+  .film-card:hover .film-poster {
+    transform: translateY(-4px);
+  }
+
+  .film-poster-inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+    position: relative;
+  }
+
+  .film-poster-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
+    border-radius: 6px;
+  }
+
+  .film-poster-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(200,75,158,0.15);
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: 6px;
+  }
+
+  .film-card:hover .film-poster-overlay { opacity: 1; }
+
+  .queer-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    background: rgba(200,75,158,0.9);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 2px;
+    backdrop-filter: blur(4px);
+  }
+
+  .film-rating {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    background: rgba(0,0,0,0.6);
+    color: var(--accent2);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 2px;
+    backdrop-filter: blur(4px);
+  }
+
+  .film-year-overlay {
+    position: relative;
+    z-index: 2;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .film-title-overlay {
+    position: relative;
+    z-index: 2;
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: white;
+    line-height: 1.2;
+  }
+
+  .film-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .film-info {
+    flex: 1;
+  }
+
+  .film-title-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+
+  .film-sub {
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .film-sub .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--muted);
+    opacity: 0.5;
+  }
+
+  .film-add {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: none;
+    color: var(--muted);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .film-add:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ===== FEATURED BANNER ===== */
+  .featured-banner {
+    margin: 60px 48px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    min-height: 300px;
+    display: flex;
+    align-items: flex-end;
+    padding: 40px;
+    background: linear-gradient(135deg, #1a0a1a, #0a0a2a, #0a1a12);
+  }
+
+  .featured-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 50% 80% at 80% 50%, rgba(200,75,158,0.25), transparent),
+      radial-gradient(ellipse 40% 60% at 20% 30%, rgba(75,110,200,0.2), transparent);
+  }
+
+  .featured-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .featured-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 12px;
+  }
+
+  .featured-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+    max-width: 500px;
+  }
+
+  .featured-desc {
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 400px;
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  /* ===== QUEER INDEX ===== */
+  .queer-index {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 12px;
+    margin-top: 16px;
+  }
+
+  .qi-label {
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 10px;
+  }
+
+  .qi-bar {
+    display: flex;
+    gap: 3px;
+  }
+
+  .qi-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .qi-dot.on { background: var(--accent); }
+
+  /* ===== EDITORIAL ===== */
+  .editorial {
+    padding: 60px 48px 0;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 24px;
+  }
+
+  .ed-card-large {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    padding: 36px;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .ed-card-large:hover { border-color: rgba(200,75,158,0.4); }
+
+  .ed-card-large::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 80% 20%, rgba(200,75,158,0.12), transparent);
+  }
+
+  .ed-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .ed-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .ed-sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 10px;
+    position: relative;
+    z-index: 2;
+    line-height: 1.6;
+  }
+
+  .ed-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ed-card-small {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ed-card-small:hover { border-color: rgba(200,75,158,0.4); }
+
+  .ed-card-small::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(200,75,158,0.15), transparent);
+  }
+
+  .ed-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.04);
+    position: absolute;
+    bottom: 8px;
+    right: 16px;
+    line-height: 1;
+  }
+
+  /* ===== MOOD SELECTOR ===== */
+  .mood-section {
+    padding: 60px 48px 0;
+  }
+
+  .mood-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 4px;
+  }
+
+  .mood-card {
+    border-radius: 8px;
+    padding: 24px 20px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .mood-card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
+
+  .mood-emoji {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .mood-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .mood-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .mood-1 { background: linear-gradient(135deg, #1a0a12, #2a1020); }
+  .mood-2 { background: linear-gradient(135deg, #0a0a1a, #101030); }
+  .mood-3 { background: linear-gradient(135deg, #1a1000, #2a2000); }
+  .mood-4 { background: linear-gradient(135deg, #001a10, #002818); }
+
+  /* ===== FOOTER ===== */
+  footer {
+    margin-top: 80px;
+    padding: 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 900;
+    margin-bottom: 8px;
+  }
+
+  .footer-tagline {
+    color: var(--muted);
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  .footer-right {
+    text-align: right;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 2;
+  }
+
+  .footer-rainbow {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(to right, #C84B9E, #F5A623, #4BC8A0, #4B6EC8);
+    border-radius: 2px;
+    margin: 12px 0;
+  }
+
+  /* ===== SCROLL REVEAL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    padding: 40px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    max-width: 560px;
+    width: 100%;
+    padding: 40px;
+    position: relative;
+    animation: fadeUp 0.3s ease;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  .modal-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+
+  .modal-meta {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .modal-desc {
+    color: rgba(240,237,232,0.7);
+    font-size: 14px;
+    line-height: 1.8;
+    margin-bottom: 28px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  /* ===== SEARCH BAR ===== */
+  .search-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 200;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 120px;
+    backdrop-filter: blur(8px);
+  }
+
+  .search-overlay.open { display: flex; }
+
+  .search-input-wrap {
+    width: 100%;
+    max-width: 600px;
+    position: relative;
+  }
+
+  .search-input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-bottom: 2px solid var(--accent);
+    color: var(--text);
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    padding: 20px 24px;
+    outline: none;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .search-hint {
+    color: var(--muted);
+    font-size: 13px;
+    margin-top: 16px;
+    letter-spacing: 1px;
+  }
+
+  .search-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 28px;
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 0 20px 60px; }
+    .hero-film-strip { display: none; }
+    .hero-stats { right: 20px; gap: 20px; }
+    .categories, .section, .featured-banner, .editorial, .mood-section, footer { padding-left: 20px; padding-right: 20px; }
+    .featured-banner { margin-left: 20px; margin-right: 20px; }
+    .editorial { grid-template-columns: 1fr; }
+    .mood-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div style="display:flex;align-items:baseline;gap:2px">
+    <a href="#" class="logo">
+      <span>R</span><span>e</span><span>n</span><span>k</span>
+    </a>
+    <span class="logo-sub">Sinema</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#films">Filmler</a></li>
+    <li><a href="#diziler">Diziler</a></li>
+    <li><a href="#listeler">Listeler</a></li>
+    <li><a href="#editoral">Editöryal</a></li>
+    <li><a href="#hakkinda">Hakkında</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-search" onclick="openSearch()" title="Ara">⌕</button>
+  </div>
+</nav>
+
+<!-- AD: Leaderboard Top (728x90) — Google AdSense buraya -->
+<div style="display:flex;justify-content:center;padding:80px 48px 0">
+  <div class="ad-zone" style="width:728px;max-width:100%;height:90px;">
+    <div class="ad-zone-size">728 × 90</div>
+    <div class="ad-zone-label">Reklam Alanı — Leaderboard</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-film-strip">
+    <div class="film-grid">
+      <div class="film-card-mini fp1"><div class="film-poster-placeholder">Brokeback</div></div>
+      <div class="film-card-mini fp2"><div class="film-poster-placeholder">Carol</div></div>
+      <div class="film-card-mini fp3"><div class="film-poster-placeholder">Portrait</div></div>
+      <div class="film-card-mini fp4"><div class="film-poster-placeholder">Moonlight</div></div>
+      <div class="film-card-mini fp5"><div class="film-poster-placeholder">Weekend</div></div>
+      <div class="film-card-mini fp6"><div class="film-poster-placeholder">Paris</div></div>
+      <div class="film-card-mini fp7"><div class="film-poster-placeholder">Brokeback</div></div>
+      <div class="film-card-mini fp8"><div class="film-poster-placeholder">Portrait</div></div>
+      <div class="film-card-mini fp9"><div class="film-poster-placeholder">Call Me</div></div>
+      <div class="film-card-mini fp5"><div class="film-poster-placeholder">Tangerine</div></div>
+      <div class="film-card-mini fp3"><div class="film-poster-placeholder">Blue</div></div>
+      <div class="film-card-mini fp1"><div class="film-poster-placeholder">GOD</div></div>
+    </div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-tag">Queer Sinema Kütüphanesi</div>
+    <h1 class="hero-title">
+      Her rengin<br>bir <em>hikayesi</em> var.
+    </h1>
+    <p class="hero-desc">
+      LGBTQ+ sinemasının en kapsamlı Türkçe rehberi. Queer klasiklerinden bağımsız yapımlara, belgesellerden kısa filmlere — tüm hikayeler burada.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="document.getElementById('films').scrollIntoView({behavior:'smooth'})">Keşfet</button>
+      <button class="btn-secondary">Bu Gece Ne İzlesem?</button>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">1.200+</div>
+      <div class="stat-label">Film & Dizi</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">48</div>
+      <div class="stat-label">Ülke</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">70s</div>
+      <div class="stat-label">Yıldan Bu Yana</div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<div class="categories reveal" id="cats">
+  <div class="section-header">
+    <h2 class="section-title">Kategoriler</h2>
+  </div>
+  <div class="cat-pills">
+    <button class="cat-pill active" onclick="filterCat(this)">Tümü</button>
+    <button class="cat-pill" onclick="filterCat(this)">🏳️‍🌈 Gay</button>
+    <button class="cat-pill" onclick="filterCat(this)">♀♀ Lezbiyen</button>
+    <button class="cat-pill" data-color="teal" onclick="filterCat(this)">⚧ Trans</button>
+    <button class="cat-pill" onclick="filterCat(this)">💜 Biseksüel</button>
+    <button class="cat-pill" data-color="gold" onclick="filterCat(this)">🌟 Queer Klasikler</button>
+    <button class="cat-pill" onclick="filterCat(this)">🎭 Bağımsız</button>
+    <button class="cat-pill" onclick="filterCat(this)">🌍 Türk Yapımı</button>
+    <button class="cat-pill" onclick="filterCat(this)">📽 Belgesel</button>
+    <button class="cat-pill" onclick="filterCat(this)">🏆 Ödüllü</button>
+  </div>
+</div>
+
+
+<!-- API KEY BANNER -->
+<div id="apiBanner" style="background:linear-gradient(135deg,#1a0a12,#2a1030);border:1px solid rgba(200,75,158,0.3);border-radius:8px;padding:16px 24px;margin:24px 48px 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+  <span style="font-size:20px">🔑</span>
+  <div style="flex:1;min-width:200px">
+    <div style="font-size:13px;font-weight:600;color:var(--text)">TMDB API Key Gir — Gerçek Film Posterleri Yüklensin</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:2px">themoviedb.org → Settings → API → ücretsiz key al → buraya yapıştır</div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <input id="apiKeyInput" type="text" placeholder="API key yapıştır..." style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:var(--text);padding:9px 14px;border-radius:4px;font-family:'DM Mono',monospace;font-size:12px;width:260px;outline:none;">
+    <button onclick="saveApiKey()" style="background:var(--accent);color:white;border:none;padding:9px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-weight:600;white-space:nowrap">Kaydet & Yükle</button>
+  </div>
+</div>
+
+<!-- FILMS SECTION -->
+<section class="section reveal" id="films">
+  <div class="section-header">
+    <h2 class="section-title">Öne Çıkan Filmler</h2>
+    <a href="#" class="section-link">Tümünü Gör →</a>
+  </div>
+  <div style="display:flex;gap:24px;align-items:flex-start">
+    <div id="filmGrid" class="films-grid" style="flex:1">
+      <!-- JS ile doldurulur -->
+    </div>
+
+  </div>
+    <!-- AD: Rectangle Sidebar (300x250) -->
+    <div style="padding-top:4px">
+      <div class="ad-zone ad-rectangle">
+        <div class="ad-zone-size">300 × 250</div>
+        <div class="ad-zone-label">Reklam Alanı</div>
+      </div>
+      <div class="ad-zone ad-rectangle" style="margin-top:16px">
+        <div class="ad-zone-size">300 × 250</div>
+        <div class="ad-zone-label">Reklam Alanı</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AD: Strip between sections -->
+<div style="display:flex;justify-content:center;padding:40px 48px 0">
+  <div class="ad-zone" style="width:728px;max-width:100%;height:90px;">
+    <div class="ad-zone-size">728 × 90</div>
+    <div class="ad-zone-label">Reklam Alanı — Banner</div>
+  </div>
+</div>
+
+<!-- FEATURED BANNER -->
+<div class="featured-banner reveal">
+  <div class="featured-content">
+    <div class="featured-tag">✦ Haftalık Seçki</div>
+    <h2 class="featured-title">Queer Sinema Tarihinin 50 Yapıtı</h2>
+    <p class="featured-desc">1970'lerden günümüze, queer sinemanın dönüm noktalarını ve gözden kaçan mücevherlerini bir araya getirdik. Editör seçkisi liste bu ay yayında.</p>
+    <button class="btn-primary">Listeyi İncele</button>
+    <div class="queer-index">
+      <span class="qi-label">Queer Yoğunluğu</span>
+      <div class="qi-bar">
+        <div class="qi-dot on"></div>
+        <div class="qi-dot on"></div>
+        <div class="qi-dot on"></div>
+        <div class="qi-dot on"></div>
+        <div class="qi-dot on"></div>
+      </div>
+      <span style="font-size:11px;color:var(--accent)">Çok Yüksek</span>
+    </div>
+  </div>
+</div>
+
+<!-- MOOD SECTION -->
+<section class="mood-section reveal" id="mood">
+  <div class="section-header">
+    <h2 class="section-title">Bu Gece Ne İzlesem?</h2>
+    <a href="#" class="section-link">Tümünü Gör →</a>
+  </div>
+  <div class="mood-grid">
+    <div class="mood-card mood-1">
+      <div class="mood-emoji">💗</div>
+      <div class="mood-name">Romantik</div>
+      <div class="mood-desc">Derin aşk hikayeleri, dokunaklı ilişki anlatıları</div>
+    </div>
+    <div class="mood-card mood-2">
+      <div class="mood-emoji">⚡</div>
+      <div class="mood-name">Politik</div>
+      <div class="mood-desc">Aktivizm, kimlik mücadelesi, toplumsal yüzleşme</div>
+    </div>
+    <div class="mood-card mood-3">
+      <div class="mood-emoji">😂</div>
+      <div class="mood-name">Komedi</div>
+      <div class="mood-desc">Hafif, eğlenceli ve kaldıran queer hikayeler</div>
+    </div>
+    <div class="mood-card mood-4">
+      <div class="mood-emoji">🌙</div>
+      <div class="mood-name">Drama</div>
+      <div class="mood-desc">Yoğun, katmanlı ve dönüştürücü anlatılar</div>
+    </div>
+  </div>
+</section>
+
+<!-- EDITORIAL -->
+<section class="editorial reveal" id="editoral">
+  <div class="ed-card-large">
+    <div class="ed-label">✦ Editöryal</div>
+    <h3 class="ed-title">"Queer Sinema Neden Sıradan Sinemadan Daha İyi Hikaye Anlatır?"</h3>
+    <p class="ed-sub">Marjinalliğin sanatsal özgürlüğe nasıl dönüştüğünü anlatan uzun bir okuma. Renk Sinema editörü tarafından.</p>
+    <div style="margin-top:20px;position:relative;z-index:2;">
+      <a href="#" class="section-link">Makaleyi Oku →</a>
+    </div>
+  </div>
+  <div class="ed-stack">
+    <div class="ed-card-small">
+      <div class="ed-label">Liste</div>
+      <div class="ed-title" style="font-size:18px;font-family:'Playfair Display',serif;font-weight:700">Trans Anlatıların Evrimi: 2000'den Bugüne</div>
+      <div class="ed-sub" style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5">16 film, 20 yıl, bir devrimin anatomisi</div>
+      <div class="ed-num">01</div>
+    </div>
+    <div class="ed-card-small">
+      <div class="ed-label">Röportaj</div>
+      <div class="ed-title" style="font-size:18px;font-family:'Playfair Display',serif;font-weight:700">Türkiye'de Queer Bağımsız Sinema Üzerine</div>
+      <div class="ed-sub" style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5">Yönetmen Deniz Atalay ile söyleşi</div>
+      <div class="ed-num">02</div>
+    </div>
+    <div class="ed-card-small">
+      <div class="ed-label">Analiz</div>
+      <div class="ed-title" style="font-size:18px;font-family:'Playfair Display',serif;font-weight:700">Hollywood'un Queer Sorunu: Temsil mi, Sömürü mü?</div>
+      <div class="ed-sub" style="font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5">Queer baiting ve ötesi</div>
+      <div class="ed-num">03</div>
+    </div>
+  </div>
+</section>
+
+<!-- AD: Pre-footer Leaderboard -->
+<div style="display:flex;justify-content:center;padding:60px 48px 0">
+  <div class="ad-zone" style="width:728px;max-width:100%;height:90px;">
+    <div class="ad-zone-size">728 × 90</div>
+    <div class="ad-zone-label">Reklam Alanı — Footer Üstü</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-logo">
+      <span style="color:#C84B9E">R</span><span style="color:#F5A623">e</span><span style="color:#4BC8A0">n</span><span style="color:#4B6EC8">k</span>
+      <span style="font-weight:300;color:rgba(240,237,232,0.4)"> Sinema</span>
+    </div>
+    <div class="footer-rainbow"></div>
+    <div class="footer-tagline">"Her rengin bir hikayesi var."</div>
+  </div>
+  <div class="footer-right">
+    <div>Filmler · Diziler · Listeler · Editöryal</div>
+    <div>Hakkında · İletişim · Gizlilik · <span style="color:var(--accent)">Reklam Ver</span></div>
+    <div style="margin-top:8px;font-size:11px;opacity:0.4;line-height:1.8">
+      Sitedeki bazı bağlantılar affiliate linki içerebilir.<br>
+      © 2026 Renk Sinema — Tüm hakları saklıdır.
+    </div>
+  </div>
+</footer>
+
+<!-- Video overlay kaldırıldı, modal içinde gösterilecek -->
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal" style="max-width:680px">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modalInfo">
+      <div style="display:flex;gap:24px;align-items:flex-start">
+        <img id="modal-poster" src="" alt="" style="display:none;width:120px;height:180px;object-fit:cover;border-radius:6px;flex-shrink:0;box-shadow:0 8px 24px rgba(0,0,0,0.5)">
+        <div style="flex:1">
+          <div class="modal-badge" id="modal-badge">Gay</div>
+          <h2 class="modal-title" id="modal-title">Film Adı</h2>
+          <div class="modal-meta" id="modal-meta">2020 · Ülke</div>
+          <p class="modal-desc" id="modal-desc">Film açıklaması...</p>
+        </div>
+      </div>
+      <div class="queer-index" style="margin-top:20px">
+        <span class="qi-label">Queer İndeksi</span>
+        <div class="qi-bar" id="qi-bar"></div>
+        <span id="modal-rating" style="font-size:11px;color:var(--accent2)">★ 9.0</span>
+      </div>
+      <div class="modal-actions" style="margin-top:24px">
+        <button class="btn-primary" id="btnIzle" onclick="playVideo()">▶ İzle</button>
+        <button class="btn-secondary">+ Listeme Ekle</button>
+      </div>
+    </div>
+    <div id="modalVideo" style="display:none;margin-top:20px">
+      <button onclick="hideVideo()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;margin-bottom:12px;letter-spacing:1px">← Geri</button>
+      <div style="position:relative;width:100%;aspect-ratio:16/9;border-radius:6px;overflow:hidden;background:#000">
+        <iframe id="videoFrame" src="" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+          style="width:100%;height:100%;position:absolute;inset:0;border:none">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEARCH OVERLAY -->
+<div class="search-overlay" id="searchOverlay">
+  <button class="search-close" onclick="closeSearch()">×</button>
+  <div class="search-input-wrap">
+    <input class="search-input" id="searchInput" type="text" placeholder="Film ara..." autocomplete="off">
+  </div>
+  <div class="search-hint">Carol · Moonlight · Brokeback Mountain · Portrait...</div>
+  <div id="searchResults" style="width:100%;max-width:600px;margin-top:8px"></div>
+</div>
+
+<script>
+  // ===== TMDB FILM VERİTABANI =====
+  // TMDB ID'leri ile queer bilgileri eşleştirilmiş liste
+  const QUEER_FILMS = [
+    // videoUrl: izleme linki (mp4, vimeo embed, vb.) — boş bırakılırsa İzle butonu çıkmaz
+    { id: 73,     title: 'Brokeback Mountain',        badge: 'Gay',      badgeColor: '#C84B9E', desc: 'İki rodeo kovboyunun yıllar içinde gelişen yasak aşkını anlatan queer sinema klasiği.', qi: 5, videoUrl: '' },
+    { id: 53276,  title: 'Carol',                     badge: 'Lezbiyen', badgeColor: '#4B6EC8', desc: '1950\'ler New York\'unda iki kadın arasında gelişen yasak aşkı anlatan sinematik başyapıt.', qi: 5, videoUrl: '' },
+    { id: 376867, title: 'Moonlight',                 badge: 'Gay',      badgeColor: '#C84B9E', desc: 'Florida\'da büyüyen genç bir Siyah erkeğin kimliğini keşfetme sürecini anlatan Oscar\'lı film.', qi: 5, videoUrl: '' },
+    { id: 334538, title: 'Portrait of a Lady on Fire',badge: 'Lezbiyen', badgeColor: '#4B6EC8', desc: '18. yüzyıl Bretanya\'sında ressam ile modeli arasında gelişen sessiz ama yoğun bir aşk.', qi: 5, videoUrl: '' },
+    { id: 318922, title: 'Call Me by Your Name',      badge: 'Gay',      badgeColor: '#C84B9E', desc: '1983 İtalyası\'nda geçen Elio ve Oliver\'ın büyüleyici yaz aşkı hikayesi.', qi: 4, videoUrl: '' },
+    { id: 256698, title: 'Tangerine',                 badge: 'Trans',    badgeColor: '#4BC8A0', desc: 'Los Angeles\'taki trans kadınların bir Noel Gecesi\'ni anlatan iPhone ile çekilmiş bağımsız film.', qi: 5, videoUrl: '' },
+    { id: 263115, title: 'Pride',                     badge: 'Gay',      badgeColor: '#C84B9E', desc: 'LGBTQ+ aktivistlerin 1984\'te Galler maden işçilerini destekleme hikayesini anlatan film.', qi: 4, videoUrl: '' },
+    { id: 259700, title: 'The Imitation Game',        badge: 'Gay',      badgeColor: '#C84B9E', desc: 'Eşcinsel bilgisayar bilimcisi Alan Turing\'in II. Dünya Savaşı sırasındaki hikayesi.', qi: 3, videoUrl: '' },
+    { id: 70,     title: 'Million Dollar Baby',       badge: 'Queer',    badgeColor: '#8B2FC9', desc: 'Yaşlı bir boks antrenörü ile azimli genç kadın boksörün derin bağını anlatan Oscar ödüllü drama.', qi: 3, videoUrl: 'https://player.autoembed.cc/embed/movie/tt0405159' },
+    // ✏️ YENİ FİLM EKLEMEK İÇİN BURAYA KOPYALA:
+    // { id: TMDB_ID, title: 'Film Adı', badge: 'Gay/Lezbiyen/Trans/Biseksüel', badgeColor: '#C84B9E', desc: 'Açıklama.', qi: 1-5, videoUrl: 'https://link.com/film' },
+  ];
+
+  let TMDB_KEY = localStorage.getItem('tmdb_api_key') || '';
+  const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
+
+  // Sayfa yüklenince
+  window.addEventListener('DOMContentLoaded', () => {
+    if (TMDB_KEY) {
+      document.getElementById('apiKeyInput').value = TMDB_KEY;
+      document.getElementById('apiBanner').style.display = 'none';
+      loadFilmsWithTMDB();
+    } else {
+      loadFilmsPlaceholder();
+    }
+    initScrollReveal();
+  });
+
+  // API key kaydet
+  function saveApiKey() {
+    const key = document.getElementById('apiKeyInput').value.trim();
+    if (!key) return;
+    TMDB_KEY = key;
+    localStorage.setItem('tmdb_api_key', key);
+    document.getElementById('apiBanner').style.display = 'none';
+    loadFilmsWithTMDB();
+  }
+
+  // TMDB'den film verisi çek ve kartları oluştur
+  async function loadFilmsWithTMDB() {
+    const grid = document.getElementById('filmGrid');
+    grid.innerHTML = '';
+    // Loading skeleton
+    for (let i = 0; i < 8; i++) {
+      const skel = document.createElement('div');
+      skel.className = 'film-card';
+      skel.innerHTML = `<div class="film-poster" style="background:var(--surface2);animation:pulse 1.5s ease infinite alternate"></div><div style="height:12px;background:var(--surface2);border-radius:4px;margin-top:12px;animation:pulse 1.5s ease infinite alternate"></div>`;
+      grid.appendChild(skel);
+    }
+
+    const results = [];
+    for (const film of QUEER_FILMS) {
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/movie/${film.id}?api_key=${TMDB_KEY}&language=tr-TR`);
+        if (!res.ok) throw new Error('API error');
+        const data = await res.json();
+        results.push({ ...film, tmdb: data });
+      } catch(e) {
+        results.push({ ...film, tmdb: null });
+      }
+    }
+
+    grid.innerHTML = '';
+    results.forEach(film => {
+      const tmdb = film.tmdb;
+      const poster = tmdb?.poster_path ? `${IMG_BASE}${tmdb.poster_path}` : null;
+      const rating = tmdb?.vote_average ? tmdb.vote_average.toFixed(1) : '—';
+      const year = tmdb?.release_date ? tmdb.release_date.slice(0,4) : '';
+      const title = tmdb?.title || film.title;
+      const overview = tmdb?.overview || film.desc;
+
+      const card = document.createElement('div');
+      card.className = 'film-card';
+      card.onclick = () => openModal(title, year, overview, film.badge, film.badgeColor, rating, poster, film.qi, film.id, film.videoUrl);
+
+      card.innerHTML = `
+        <div class="film-poster" style="${poster ? `background:url('${poster}') center/cover no-repeat` : 'background:linear-gradient(135deg,#1a0a12,#2a1030)'}">
+          <div class="film-poster-inner">
+            <div class="film-poster-overlay"></div>
+            <div class="queer-badge" style="background:${film.badgeColor}cc">${film.badge}</div>
+            <div class="film-rating">★ ${rating}</div>
+            <div class="film-year-overlay">${year}</div>
+            <div class="film-title-overlay">${title}</div>
+          </div>
+        </div>
+        <div class="film-meta">
+          <div class="film-info">
+            <div class="film-title-text">${title}</div>
+            <div class="film-sub">${year}<span class="dot"></span>${film.badge}</div>
+          </div>
+          <button class="film-add" title="Listeme Ekle" onclick="event.stopPropagation();this.textContent='✓';this.style.color='var(--accent)';this.style.borderColor='var(--accent)'">+</button>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  // API key yokken placeholder filmler
+  function loadFilmsPlaceholder() {
+    const grid = document.getElementById('filmGrid');
+    const colors = ['#1a0a12,#3d1430','#0a0a1a,#141452','#0a1a12,#145228','#1a1200,#523800','#1a0a1a,#4a1452','#001a1a,#005252','#1a0000,#520000','#0d0d0d,#2a2a2a'];
+    grid.innerHTML = '';
+    QUEER_FILMS.forEach((film, i) => {
+      const card = document.createElement('div');
+      card.className = 'film-card';
+      card.onclick = () => openModal(film.title, '', film.desc, film.badge, film.badgeColor, '—', null, film.qi, film.id, film.videoUrl);
+      card.innerHTML = `
+        <div class="film-poster" style="background:linear-gradient(135deg,${colors[i % colors.length]})">
+          <div class="film-poster-inner">
+            <div class="film-poster-overlay"></div>
+            <div class="queer-badge" style="background:${film.badgeColor}cc">${film.badge}</div>
+            <div class="film-year-overlay">API key gir → poster yüklensin</div>
+            <div class="film-title-overlay">${film.title}</div>
+          </div>
+        </div>
+        <div class="film-meta">
+          <div class="film-info">
+            <div class="film-title-text">${film.title}</div>
+            <div class="film-sub">${film.badge}</div>
+          </div>
+          <button class="film-add" title="Listeme Ekle" onclick="event.stopPropagation();this.textContent='✓';this.style.color='var(--accent)';this.style.borderColor='var(--accent)'">+</button>
+        </div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  // ===== MODAL =====
+  let currentVideoUrl = null;
+
+  function openModal(title, year, desc, badge, badgeColor, rating, poster, qi, tmdbId, videoUrl) {
+    currentVideoUrl = videoUrl || null;
+
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-meta').textContent = year ? `${year} · ${badge}` : badge;
+    document.getElementById('modal-desc').textContent = desc;
+    document.getElementById('modal-badge').textContent = badge;
+    document.getElementById('modal-badge').style.background = badgeColor || 'var(--accent)';
+    document.getElementById('modal-rating').textContent = rating !== '—' ? `★ ${rating}` : '';
+
+    // Poster
+    const posterEl = document.getElementById('modal-poster');
+    if (poster) { posterEl.style.display = 'block'; posterEl.src = poster; }
+    else { posterEl.style.display = 'none'; }
+
+    // Queer index dots
+    const bar = document.getElementById('qi-bar');
+    bar.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'qi-dot' + (i <= qi ? ' on' : '');
+      bar.appendChild(dot);
+    }
+
+    // İzle buton durumu
+    const btn = document.getElementById('btnIzle');
+    if (videoUrl) {
+      btn.style.display = 'inline-block';
+      btn.textContent = '▶ İzle';
+      btn.style.opacity = '1';
+      btn.disabled = false;
+    } else {
+      btn.style.display = 'none';
+    }
+    // Video panelini sıfırla
+    document.getElementById('modalVideo').style.display = 'none';
+    document.getElementById('modalInfo').style.display = 'block';
+    document.getElementById('videoFrame').src = '';
+
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function playVideo() {
+    if (!currentVideoUrl) return;
+    document.getElementById('modalInfo').style.display = 'none';
+    document.getElementById('modalVideo').style.display = 'block';
+    document.getElementById('videoFrame').src = currentVideoUrl;
+  }
+
+  function hideVideo() {
+    document.getElementById('modalVideo').style.display = 'none';
+    document.getElementById('modalInfo').style.display = 'block';
+    document.getElementById('videoFrame').src = '';
+  }
+
+  function closeVideo() {}
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modal')) closeModal();
+  }
+
+  // ===== SEARCH =====
+  function openSearch() {
+    document.getElementById('searchOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('searchInput').focus(), 100);
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSearch() {
+    document.getElementById('searchOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Canlı TMDB araması
+  let searchTimer;
+  document.addEventListener('DOMContentLoaded', () => {
+    const input = document.getElementById('searchInput');
+    input.addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => doSearch(input.value.trim()), 400);
+    });
+  });
+
+  async function doSearch(q) {
+    const resultsEl = document.getElementById('searchResults');
+    if (!q || q.length < 2) { resultsEl.innerHTML = ''; return; }
+    if (!TMDB_KEY) {
+      resultsEl.innerHTML = '<div style="color:var(--muted);font-size:13px;margin-top:20px">Arama için API key gerekli.</div>';
+      return;
+    }
+    resultsEl.innerHTML = '<div style="color:var(--muted);font-size:13px;margin-top:20px">Aranıyor...</div>';
+    try {
+      const res = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_KEY}&query=${encodeURIComponent(q)}&language=tr-TR`);
+      const data = await res.json();
+      const films = (data.results || []).slice(0, 5);
+      if (!films.length) { resultsEl.innerHTML = '<div style="color:var(--muted);font-size:13px;margin-top:20px">Sonuç bulunamadı.</div>'; return; }
+      resultsEl.innerHTML = films.map(f => `
+        <div onclick="closeSearch();openModal('${f.title?.replace(/'/g,"\\'")}','${(f.release_date||'').slice(0,4)}','${f.overview?.replace(/'/g,"\\'").slice(0,120) || ''}...','Film','var(--accent)','${f.vote_average?.toFixed(1)||"—"}','${f.poster_path ? IMG_BASE+f.poster_path : ''}',3)" style="display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer">
+          <div style="width:36px;height:54px;border-radius:4px;overflow:hidden;flex-shrink:0;background:var(--surface2)">
+            ${f.poster_path ? `<img src="${IMG_BASE}${f.poster_path}" style="width:100%;height:100%;object-fit:cover">` : ''}
+          </div>
+          <div>
+            <div style="font-weight:600;font-size:14px">${f.title}</div>
+            <div style="font-size:12px;color:var(--muted)">${(f.release_date||'').slice(0,4)} · ★ ${f.vote_average?.toFixed(1)||'—'}</div>
+          </div>
+        </div>`).join('');
+    } catch(e) {
+      resultsEl.innerHTML = '<div style="color:var(--muted);font-size:13px;margin-top:20px">Bağlantı hatası.</div>';
+    }
+  }
+
+  // ===== SCROLL REVEAL =====
+  function initScrollReveal() {
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    reveals.forEach(r => io.observe(r));
+  }
+
+  // ===== CATEGORY FILTER =====
+  function filterCat(btn) {
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // ===== KEYBOARD =====
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { hideVideo(); closeModal(); closeSearch(); }
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+  });
+
+  // Pulse animation for skeleton
+  const style = document.createElement('style');
+  style.textContent = '@keyframes pulse { from{opacity:0.4} to{opacity:0.8} } @keyframes spin { to{transform:rotate(360deg)} }';
+  document.head.appendChild(style);
+</script>
+</body>
+</html>
