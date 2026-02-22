@@ -1116,16 +1116,14 @@
     <h2 class="section-title">Kategoriler</h2>
   </div>
   <div class="cat-pills">
-    <button class="cat-pill active" onclick="filterCat(this)">Tümü</button>
-    <button class="cat-pill" onclick="filterCat(this)">🏳️‍🌈 Gay</button>
-    <button class="cat-pill" onclick="filterCat(this)">♀♀ Lezbiyen</button>
-    <button class="cat-pill" data-color="teal" onclick="filterCat(this)">⚧ Trans</button>
-    <button class="cat-pill" onclick="filterCat(this)">💜 Biseksüel</button>
-    <button class="cat-pill" data-color="gold" onclick="filterCat(this)">🌟 Queer Klasikler</button>
-    <button class="cat-pill" onclick="filterCat(this)">🎭 Bağımsız</button>
-    <button class="cat-pill" onclick="filterCat(this)">🌍 Türk Yapımı</button>
-    <button class="cat-pill" onclick="filterCat(this)">📽 Belgesel</button>
-    <button class="cat-pill" onclick="filterCat(this)">🏆 Ödüllü</button>
+    <button class="cat-pill active" onclick="filterCat(this,'Tümü')">Tümü</button>
+    <button class="cat-pill" onclick="filterCat(this,'Gay')">🏳️‍🌈 Gay</button>
+    <button class="cat-pill" onclick="filterCat(this,'Lezbiyen')">♀♀ Lezbiyen</button>
+    <button class="cat-pill" data-color="teal" onclick="filterCat(this,'Trans')">⚧ Trans</button>
+    <button class="cat-pill" onclick="filterCat(this,'Biseksüel')">💜 Biseksüel</button>
+    <button class="cat-pill" data-color="gold" onclick="filterCat(this,'Queer')">🌟 Queer</button>
+    <button class="cat-pill" onclick="filterCat(this,'Belgesel')">📽 Belgesel</button>
+    <button class="cat-pill" onclick="filterCat(this,'Türk Yapımı')">🌍 Türk Yapımı</button>
   </div>
 </div>
 
@@ -1147,7 +1145,7 @@
 <section class="section reveal" id="films">
   <div class="section-header">
     <h2 class="section-title">Öne Çıkan Filmler</h2>
-    <a href="#" class="section-link">Tümünü Gör →</a>
+    <a href="#" class="section-link" onclick="showAllFilms(event)">Tümünü Gör →</a>
   </div>
   <div style="display:flex;gap:24px;align-items:flex-start">
     <div id="filmGrid" class="films-grid" style="flex:1">
@@ -1290,6 +1288,28 @@
 
 <!-- Video overlay kaldırıldı, modal içinde gösterilecek -->
 
+<!-- TÜM FİLMLER SAYFASI -->
+<div id="allFilmsOverlay" style="display:none;position:fixed;inset:0;z-index:500;background:var(--bg);overflow-y:auto;padding:40px 48px 80px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;border-bottom:1px solid var(--border);padding-bottom:20px">
+    <div>
+      <h1 style="font-family:'Playfair Display',serif;font-size:36px;font-weight:900;letter-spacing:-1px">Tüm Filmler</h1>
+      <div style="color:var(--muted);font-size:13px;margin-top:4px" id="allFilmsCount"></div>
+    </div>
+    <button onclick="closeAllFilms()" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 20px;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px">← Geri</button>
+  </div>
+  <div class="cat-pills" style="margin-bottom:28px" id="allFilmsPills">
+    <button class="cat-pill active" onclick="filterAllFilms(this,'Tümü')">Tümü</button>
+    <button class="cat-pill" onclick="filterAllFilms(this,'Gay')">🏳️‍🌈 Gay</button>
+    <button class="cat-pill" onclick="filterAllFilms(this,'Lezbiyen')">♀♀ Lezbiyen</button>
+    <button class="cat-pill" data-color="teal" onclick="filterAllFilms(this,'Trans')">⚧ Trans</button>
+    <button class="cat-pill" onclick="filterAllFilms(this,'Biseksüel')">💜 Biseksüel</button>
+    <button class="cat-pill" data-color="gold" onclick="filterAllFilms(this,'Queer')">🌟 Queer</button>
+    <button class="cat-pill" onclick="filterAllFilms(this,'Belgesel')">📽 Belgesel</button>
+    <button class="cat-pill" onclick="filterAllFilms(this,'Türk Yapımı')">🌍 Türk Yapımı</button>
+  </div>
+  <div id="allFilmsGrid" class="films-grid"></div>
+</div>
+
 <!-- MODAL -->
 <div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
   <div class="modal" style="max-width:680px">
@@ -1342,18 +1362,30 @@
   // ===== TMDB FILM VERİTABANI =====
   // TMDB ID'leri ile queer bilgileri eşleştirilmiş liste
   const QUEER_FILMS = [
-    // videoUrl: izleme linki (mp4, vimeo embed, vb.) — boş bırakılırsa İzle butonu çıkmaz
-    { id: 73,     title: 'Brokeback Mountain',        badge: 'Gay',      badgeColor: '#C84B9E', desc: 'İki rodeo kovboyunun yıllar içinde gelişen yasak aşkını anlatan queer sinema klasiği.', qi: 5, videoUrl: '' },
-    { id: 53276,  title: 'Carol',                     badge: 'Lezbiyen', badgeColor: '#4B6EC8', desc: '1950\'ler New York\'unda iki kadın arasında gelişen yasak aşkı anlatan sinematik başyapıt.', qi: 5, videoUrl: '' },
-    { id: 376867, title: 'Moonlight',                 badge: 'Gay',      badgeColor: '#C84B9E', desc: 'Florida\'da büyüyen genç bir Siyah erkeğin kimliğini keşfetme sürecini anlatan Oscar\'lı film.', qi: 5, videoUrl: '' },
-    { id: 334538, title: 'Portrait of a Lady on Fire',badge: 'Lezbiyen', badgeColor: '#4B6EC8', desc: '18. yüzyıl Bretanya\'sında ressam ile modeli arasında gelişen sessiz ama yoğun bir aşk.', qi: 5, videoUrl: '' },
-    { id: 318922, title: 'Call Me by Your Name',      badge: 'Gay',      badgeColor: '#C84B9E', desc: '1983 İtalyası\'nda geçen Elio ve Oliver\'ın büyüleyici yaz aşkı hikayesi.', qi: 4, videoUrl: '' },
-    { id: 256698, title: 'Tangerine',                 badge: 'Trans',    badgeColor: '#4BC8A0', desc: 'Los Angeles\'taki trans kadınların bir Noel Gecesi\'ni anlatan iPhone ile çekilmiş bağımsız film.', qi: 5, videoUrl: '' },
-    { id: 263115, title: 'Pride',                     badge: 'Gay',      badgeColor: '#C84B9E', desc: 'LGBTQ+ aktivistlerin 1984\'te Galler maden işçilerini destekleme hikayesini anlatan film.', qi: 4, videoUrl: '' },
-    { id: 259700, title: 'The Imitation Game',        badge: 'Gay',      badgeColor: '#C84B9E', desc: 'Eşcinsel bilgisayar bilimcisi Alan Turing\'in II. Dünya Savaşı sırasındaki hikayesi.', qi: 3, videoUrl: '' },
-    { id: 70,     title: 'Million Dollar Baby',       badge: 'Queer',    badgeColor: '#8B2FC9', desc: 'Yaşlı bir boks antrenörü ile azimli genç kadın boksörün derin bağını anlatan Oscar ödüllü drama.', qi: 3, videoUrl: 'https://player.autoembed.cc/embed/movie/tt0405159' },
+    // videoUrl: izleme linki — boş bırakılırsa İzle butonu çıkmaz
+    { id: 142,    title: 'Brokeback Mountain',         badge: 'Gay',      badgeColor: '#C84B9E', desc: 'İki rodeo kovboyunun yıllar içinde gelişen yasak aşkını anlatan queer sinema klasiği.', qi: 5, videoUrl: '' },
+    { id: 258480, title: 'Carol',                      badge: 'Lezbiyen', badgeColor: '#4B6EC8', desc: '1950 New Yorkunda iki kadin arasinda gelisen yasak aski anlatan sinematik basyapit.', qi: 5, videoUrl: '' },
+    { id: 376867, title: 'Moonlight',                  badge: 'Gay',      badgeColor: '#C84B9E', desc: 'Florida\’da büyüyen genç bir Siyah erkeğin kimliğini keşfetme sürecini anlatan Oscar\’lı film.', qi: 5, videoUrl: '' },
+    { id: 426426, title: 'Portrait of a Lady on Fire', badge: 'Lezbiyen', badgeColor: '#4B6EC8', desc: '18. yuzyil Bretanyasinda ressam ile modeli arasinda gelisen sessiz ama yogun bir ask.', qi: 5, videoUrl: '' },
+    { id: 398978, title: 'Call Me by Your Name',       badge: 'Gay',      badgeColor: '#C84B9E', desc: '1983 Italyasinda gecen Elio ve Oliver buyuleyici yaz aski hikayesi.', qi: 4, videoUrl: '' },
+    { id: 322588, title: 'Tangerine',                  badge: 'Trans',    badgeColor: '#4BC8A0', desc: 'Los Angeles trans kadinlarinin bir Noel Gecesini anlatan iPhone ile cekilmis bagimsiz film.', qi: 5, videoUrl: '' },
+    { id: 260522, title: 'Pride',                      badge: 'Gay',      badgeColor: '#C84B9E', desc: 'LGBTQ+ aktivistlerin 1984te Galler maden iscilerini destekleme hikayesini anlatan film.', qi: 4, videoUrl: '' },
+    { id: 205596, title: 'The Imitation Game',         badge: 'Gay',      badgeColor: '#C84B9E', desc: 'Escinsel bilgisayar bilimcisi Alan Turing II. Dunya Savasi sirasindaki hikayesi.', qi: 3, videoUrl: '' },
+    { id: 70,     title: 'Million Dollar Baby',        badge: 'Queer',    badgeColor: '#8B2FC9', desc: 'Yaşlı bir boks antrenörü ile azimli genç kadın boksörün derin bağını anlatan Oscar ödüllü drama.', qi: 3, videoUrl: 'https://player.autoembed.cc/embed/movie/tt0405159' },
+    { id: 314,    title: 'Brokeback Mountain Kisa',     badge: 'Gay',      badgeColor: '#C84B9E', desc: 'Annie Proulx eserinden uyarlanan epik ask drami.', qi: 5, videoUrl: '' },
+    { id: 10539,  title: 'Milk',                        badge: 'Gay',      badgeColor: '#C84B9E', desc: 'San Francisco ilk acikca escinsel belediye meclis uyesi Harvey Milk yasami anlatilan biyografik film.', qi: 5, videoUrl: '' },
+    { id: 4348,   title: 'Transamerica',                badge: 'Trans',    badgeColor: '#4BC8A0', desc: 'Ameliyat öncesinde kaybolan oğlunu bulmak zorunda kalan trans bir kadının yolculuğu.', qi: 5, videoUrl: '' },
+    { id: 522,    title: 'Hedwig and the Angry Inch',   badge: 'Trans',    badgeColor: '#4BC8A0', desc: 'Doğu Almanya’dan Amerika’ya gelen trans bir rock müzisyenin müzikal yolculuğu.', qi: 5, videoUrl: '' },
+    { id: 857,    title: 'Saving Private Ryan',         badge: 'Gay',      badgeColor: '#C84B9E', desc: 'II. Dünya Savaşı’nda geçen, eşcinsel karakterlerin de yer aldığı savaş draması.', qi: 2, videoUrl: '' },
+    { id: 72976,  title: 'Pariah',                      badge: 'Lezbiyen', badgeColor: '#4B6EC8', desc: 'Brooklyn’de yaşayan genç Siyah bir lezbiyenin kimliğini keşfetme sürecini anlatan bağımsız film.', qi: 5, videoUrl: '' },
+    { id: 324552, title: 'Moonrise Kingdom',            badge: 'Queer',    badgeColor: '#8B2FC9', desc: 'Wes Anderson’ın büyülü dünyasında iki çocuğun kaçış hikayesi.', qi: 2, videoUrl: '' },
+    { id: 264644, title: 'The Danish Girl',             badge: 'Trans',    badgeColor: '#4BC8A0', desc: 'Dünyanın ilk cinsiyet geçiş ameliyatlarından birini geçiren Lili Elbe’nin hikayesi.', qi: 5, videoUrl: '' },
+    { id: 441130, title: 'Moonlight (Kısa)',            badge: 'Gay',      badgeColor: '#C84B9E', desc: 'Tauri Jenkins’in "In Moonlight Black Boys Look Blue" adlı oyunundan uyarlanan şiirsel drama.', qi: 5, videoUrl: '' },
+    { id: 337339, title: 'The Kids Are All Right',      badge: 'Lezbiyen', badgeColor: '#4B6EC8', desc: 'İki lezbiyen annenin çocukları biyolojik babalarını bulmak istediğinde yaşananları anlatan komedi-drama.', qi: 4, videoUrl: '' },
+    { id: 399174, title: 'Call Her Ganda',              badge: 'Trans',    badgeColor: '#4BC8A0', desc: 'Filipinli trans kadın Jennifer Laude’nin Amerikalı bir asker tarafından öldürülmesini anlatan belgesel.', qi: 5, videoUrl: '' },
+    { id: 38357,  title: 'Blue Is the Warmest Colour',  badge: 'Lezbiyen', badgeColor: '#4B6EC8', desc: 'Cannes Altın Palmiyesi kazanan, iki genç kadın arasındaki tutkulu aşkı anlatan Fransız filmi.', qi: 5, videoUrl: '' },
     // ✏️ YENİ FİLM EKLEMEK İÇİN BURAYA KOPYALA:
-    // { id: TMDB_ID, title: 'Film Adı', badge: 'Gay/Lezbiyen/Trans/Biseksüel', badgeColor: '#C84B9E', desc: 'Açıklama.', qi: 1-5, videoUrl: 'https://link.com/film' },
+    // { id: TMDB_ID, title: 'Film Adı', badge: 'Gay/Lezbiyen/Trans/Biseksüel/Queer', badgeColor: '#C84B9E', desc: 'Açıklama.', qi: 1-5, videoUrl: '' },
   ];
 
   let TMDB_KEY = localStorage.getItem('tmdb_api_key') || '';
@@ -1406,6 +1438,7 @@
     }
 
     grid.innerHTML = '';
+    window._allFilmsData = [];
     results.forEach(film => {
       const tmdb = film.tmdb;
       const poster = tmdb?.poster_path ? `${IMG_BASE}${tmdb.poster_path}` : null;
@@ -1413,6 +1446,8 @@
       const year = tmdb?.release_date ? tmdb.release_date.slice(0,4) : '';
       const title = tmdb?.title || film.title;
       const overview = tmdb?.overview || film.desc;
+
+      window._allFilmsData.push({ ...film, poster, rating, year, title, desc: overview });
 
       const card = document.createElement('div');
       card.className = 'film-card';
@@ -1444,6 +1479,7 @@
     const grid = document.getElementById('filmGrid');
     const colors = ['#1a0a12,#3d1430','#0a0a1a,#141452','#0a1a12,#145228','#1a1200,#523800','#1a0a1a,#4a1452','#001a1a,#005252','#1a0000,#520000','#0d0d0d,#2a2a2a'];
     grid.innerHTML = '';
+    window._allFilmsData = QUEER_FILMS.map(f => ({...f, year:'', rating:'—', poster:null, desc:f.desc, title:f.title}));
     QUEER_FILMS.forEach((film, i) => {
       const card = document.createElement('div');
       card.className = 'film-card';
@@ -1588,6 +1624,62 @@
     }
   }
 
+  // ===== TÜM FİLMLER =====
+  function showAllFilms(e) {
+    e.preventDefault();
+    const overlay = document.getElementById('allFilmsOverlay');
+    overlay.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    populateAllFilms('Tümü');
+  }
+
+  function closeAllFilms() {
+    document.getElementById('allFilmsOverlay').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function filterAllFilms(btn, category) {
+    document.querySelectorAll('#allFilmsPills .cat-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    populateAllFilms(category);
+  }
+
+  function populateAllFilms(category) {
+    const grid = document.getElementById('allFilmsGrid');
+    const allData = window._allFilmsData || [];
+    const filtered = category === 'Tümü' ? allData : allData.filter(f => f.badge === category);
+    document.getElementById('allFilmsCount').textContent = filtered.length + ' film';
+    grid.innerHTML = '';
+    filtered.forEach(function(film) {
+      const card = document.createElement('div');
+      card.className = 'film-card';
+      card.onclick = function() {
+        closeAllFilms();
+        openModal(film.title, film.year, film.desc, film.badge, film.badgeColor, film.rating, film.poster, film.qi, film.id, film.videoUrl);
+      };
+      const bgStyle = film.poster ? 'background:url(' + film.poster + ') center/cover no-repeat' : 'background:linear-gradient(135deg,#1a0a12,#2a1030)';
+      const ratingText = film.rating !== '—' ? '&#9733; ' + film.rating : '';
+      card.innerHTML =
+        '<div class="film-poster" style="' + bgStyle + '">' +
+          '<div class="film-poster-inner">' +
+            '<div class="film-poster-overlay"></div>' +
+            '<div class="queer-badge" style="background:' + film.badgeColor + 'cc">' + film.badge + '</div>' +
+            '<div class="film-rating">' + ratingText + '</div>' +
+            '<div class="film-year-overlay">' + film.year + '</div>' +
+            '<div class="film-title-overlay">' + film.title + '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="film-meta">' +
+          '<div class="film-info">' +
+            '<div class="film-title-text">' + film.title + '</div>' +
+            '<div class="film-sub">' + film.year + '<span class="dot"></span>' + film.badge + '</div>' +
+          '</div>' +
+          '<button class="film-add" title="Listeme Ekle" onclick="event.stopPropagation();this.textContent=\'✓\';this.style.color=\'var(--accent)\';this.style.borderColor=\'var(--accent)\'">+</button>' +
+        '</div>';
+      grid.appendChild(card);
+    });
+  }
+
   // ===== SCROLL REVEAL =====
   function initScrollReveal() {
     const reveals = document.querySelectorAll('.reveal');
@@ -1598,9 +1690,28 @@
   }
 
   // ===== CATEGORY FILTER =====
-  function filterCat(btn) {
+  let currentCategory = 'Tümü';
+
+  function filterCat(btn, category) {
     document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
+    currentCategory = category || 'Tümü';
+    renderFilms();
+  }
+
+  function renderFilms() {
+    const grid = document.getElementById('filmGrid');
+    const cards = grid.querySelectorAll('.film-card');
+    cards.forEach(card => {
+      const badge = card.querySelector('.queer-badge');
+      if (!badge) return;
+      const cat = badge.textContent.trim();
+      if (currentCategory === 'Tümü' || cat === currentCategory) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
   }
 
   // ===== KEYBOARD =====
